@@ -43,11 +43,19 @@
       "type": "image/png"
     }
   ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "file_handlers": [
     {
       "action": "./index.html",
       "accept": {
-        "text/plain": [".txt", ".md", ".js", ".json", ".css", ".html", ".py", ".sh", ".yaml", ".yml"]
+        "text/plain": [".txt", ".md", ".txt", ".md", ".js", ".json", ".css", ".html", ".py", ".sh", ".yaml", ".yml", ".c", ".cpp", ".h", ".java", ".go", ".rs", ".ts"],
+        "text/markdown": [".md"],
+        "text/javascript": [".js", ".mjs"],
+        "application/json": [".json"],
+        "text/css": [".css"],
+        "text/html": [".html"]
       }
     }
   ]

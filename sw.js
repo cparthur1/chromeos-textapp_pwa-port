@@ -1,4 +1,4 @@
-const CACHE_NAME = 'text-app-v4';
+const CACHE_NAME = 'text-app-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -17,7 +17,7 @@ const ASSETS = [
   './js/controllers/search.js',
   './js/controllers/settings.js',
   './js/controllers/window.js',
-  './js/pwa-compat.v2.js',
+  './js/pwa-compat.v3.js',
   './locales/en/messages.json',
   './third_party/jquery/jquery-1.8.3.min.js',
   './third_party/material-components-web/material-components-web.min.css',

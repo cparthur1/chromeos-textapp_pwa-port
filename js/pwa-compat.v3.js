@@ -17,7 +17,32 @@
   // --- chrome.app.runtime ---
   if (!chrome.app) chrome.app = {};
   if (!chrome.app.runtime) chrome.app.runtime = {};
-  chrome.app.runtime.onLaunched = { addListener: function() {} };
+  var launchListeners = [];
+  chrome.app.runtime.onLaunched = {
+    addListener: function(callback) {
+      launchListeners.push(callback);
+    }
+  };
+
+  if ('launchQueue' in window) {
+    window.launchQueue.setConsumer(function(launchParams) {
+      if (!launchParams.files.length) return;
+
+      // Ensure FileEntryPolyfill is available (it's defined later in the IIFE)
+      // We'll wrap files into the expected format for onLaunched
+      var items = launchParams.files.map(function(handle) {
+        return { entry: new FileEntryPolyfill(handle) };
+      });
+
+      launchListeners.forEach(function(listener) {
+        try {
+          listener({ items: items });
+        } catch (e) {
+          console.error('Error in onLaunched listener:', e);
+        }
+      });
+    });
+  }
 
   // --- chrome.app.window ---
   if (!chrome.app.window) chrome.app.window = {};
