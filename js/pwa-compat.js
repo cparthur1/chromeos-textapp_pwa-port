@@ -85,6 +85,7 @@
         if (callback) callback(result);
       },
       set: function(items, callback) {
+        console.log('pwa-compat: storage.set in area', areaName, items);
         var changes = {};
         Object.keys(items).forEach(function(key) {
           var oldValue = localStorage.getItem(areaName + '.' + key);
@@ -95,6 +96,7 @@
         });
         
         // Notify listeners
+        console.log('pwa-compat: notifying', storageListeners.length, 'listeners of changes', changes);
         storageListeners.forEach(function(listener) {
           try {
             listener(changes, areaName);
