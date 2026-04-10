@@ -169,6 +169,7 @@
     "closeFileButton": { "message": "Close file" }
   };
   var locale = (navigator.language || 'en').replace('-', '_');
+  var defaultLocale = 'en';
   var fetchURL = './locales/' + locale + '/messages.json';
   var fallbackURL = './locales/en/messages.json';
 
