@@ -5,11 +5,20 @@ function WindowController(editor, settings, tabs) {
   this.editor_ = editor;
   this.settings_ = settings;
   this.tabs_ = tabs;
-  document.getElementById('window-close').addEventListener('click', () => {
-    this.close();
-  });
-  $('#window-minimize').click(this.minimize_.bind(this));
-  $('#window-maximize').click(this.maximize_.bind(this));
+  var closeButton = document.getElementById('window-close');
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      this.close();
+    });
+  }
+  var minimizeButton = document.getElementById('window-minimize');
+  if (minimizeButton) {
+    $(minimizeButton).click(this.minimize_.bind(this));
+  }
+  var maximizeButton = document.getElementById('window-maximize');
+  if (maximizeButton) {
+    $(maximizeButton).click(this.maximize_.bind(this));
+  }
   $('#toggle-sidebar').click(this.toggleSidebar_.bind(this));
   $('#sidebar').on('transitionend', this.updateSidebarVisibility_.bind(this));
   $('#sidebar-resizer').mousedown(this.resizeStart_.bind(this));
