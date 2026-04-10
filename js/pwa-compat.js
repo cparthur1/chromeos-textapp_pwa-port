@@ -87,12 +87,17 @@
         Object.keys(items).forEach(function(key) {
           localStorage.setItem(areaName + '.' + key, JSON.stringify(items[key]));
         });
-        if (callback) {
-          var changes = {};
-          Object.keys(items).forEach(function(key) {
-            changes[key] = { newValue: items[key] };
-          });
+        
+        var changes = {};
+        Object.keys(items).forEach(function(key) {
+          changes[key] = { newValue: items[key] };
+        });
+        // Delay to simulate async behavior and ensure listeners are ready
+        setTimeout(function() {
           $.event.trigger('storageOnChanged', [changes, areaName]);
+        }, 0);
+
+        if (callback) {
           callback();
         }
       },
