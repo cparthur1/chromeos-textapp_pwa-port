@@ -72,11 +72,11 @@ Settings.prototype.getAll = function() {
 };
 
 Settings.prototype.set = function(key, value) {
+  this.settings_[key] = value;
   var item = {};
   item['settings-' + key] = value;
   this.storage_.set(item);
-  // this.settings_ will be updated in onChanged_ to keep them in sync with
-  // storage.
+  $.event.trigger('settingschange', [key, value]);
 };
 
 Settings.prototype.reset = function(key) {
@@ -99,7 +99,6 @@ Settings.prototype.getSettingsCallback_ = function(settings) {
 };
 
 Settings.prototype.onChanged_ = function(changes, areaName) {
-  console.log('Settings: onChanged_ called for area', areaName, 'changes:', changes);
   if (areaName !== Settings.AREA) {
     console.warn('Storage change in wrong area. Maybe a bug?');
     return;
