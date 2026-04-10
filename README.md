@@ -1,35 +1,47 @@
-# Text Chrome App
+# Text Editor - Progressive Web App (PWA)
 
-Just a text editor for Chrome OS and Chrome. Install via the Chrome Web Store: [stable version](https://chrome.google.com/webstore/detail/mmfbcljfglbokpmkimbfghdkjmjhdgbg) or [canary version](https://chrome.google.com/webstore/detail/text-canary/fojlbpdodmdfcdeigmknnaeikaadaaoh).
+This is a **Progressive Web App (PWA)** fork of the original [Google Chrome OS Text App](https://github.com/GoogleChromeLabs/text-app). 
 
-## Getting the code
+While the original project is archived and was designed specifically for Chrome OS, this fork has been modernized to run in **any modern web browser** and can be installed as a standalone desktop application.
 
-You can download the whole source code [as one archive](https://github.com/GoogleChromeLabs/text-app/archive/master.zip), or get it from the repository using git:
+## Key PWA Features
 
-    git clone --recursive git://github.com/GoogleChromeLabs/text-app.git
+*   **Installable**: Works as a standalone app on Windows, macOS, Linux, and Chrome OS via PWA installation.
+*   **Offline Support**: Fully functional without an internet connection using Service Workers.
+*   **Modern File System Access**: Uses the **File System Access API** to open and save local files directly from your browser.
+*   **Storage**: Persists your settings and theme preferences using local storage polyfills.
+*   **i18n Support**: Dynamic localization with fallback for local `file://` usage.
+
+## Getting Started
+
+### Quick Start
+To run the app locally, simply open [index.html](index.html) in a modern web browser (Chrome or Edge recommended for full File System API support).
+
+### Serving the App (Recommended)
+For the best experience (including Service Worker support), serve the directory using a local web server:
+
+```bash
+npx serve .
+# or
+python3 -m http.server
+```
 
 ## Prebuild CodeMirror
 
-Do this before running the development version or building the package. You'll need Node.js.
-```
+The editor uses CodeMirror 6. You must prebuild the bundle before running the app if you are making changes to the editor core.
+
+```bash
 cd third_party/codemirror.next
 npm install
 npm run rebuild
 ```
 
-If you make changes to `bundle.ts` or the dependencies in `package.json` in `third_party/codemirror.next/`, you must rebuild CodeMirror: `npm run rebuild`.
+## Original Project & Attribution
 
-## Running the development version
+This project is a fork of the [GoogleChromeLabs/text-app](https://github.com/GoogleChromeLabs/text-app), which is licensed under the **BSD 3-Clause License**. 
 
-* Check `Developer Mode` in `chrome://extensions`
-* Click "Load unpacked extension..." in `chrome://extensions` and select the `text-app` directory.
+*   **Original Authors**: The Chromium Authors.
+*   **License**: BSD 3-Clause (See [LICENSE.md](LICENSE.md) for details).
 
-## Building the package
-
-You do not have to build the app to install it in Chrome. Building will just extract all the required files and minify the JS code.
-
-Building script requires Python3 and will use online Closure Compiler. Just run
-
-    python3 build.py
-
-and the package will be written to `text-app/build/` directory in zipped and unzipped formats (canary version). To build the stable version run the build script with the flag -s.
+---
+*Developed as a modernized fork to preserve and extend the functionality of the classic Chrome OS text editor for the open web.*
