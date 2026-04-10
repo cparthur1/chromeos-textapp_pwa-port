@@ -168,8 +168,9 @@
     "okDialogButton": { "message": "OK" },
     "closeFileButton": { "message": "Close file" }
   };
-  var locale = navigator.language.replace('-', '_');
-  var defaultLocale = 'en';
+  var locale = (navigator.language || 'en').replace('-', '_');
+  var fetchURL = './locales/' + locale + '/messages.json';
+  var fallbackURL = './locales/en/messages.json';
 
   function loadLocale(lang, callback) {
     if (window.location.protocol === 'file:') {
@@ -177,7 +178,7 @@
       if (callback) callback();
       return;
     }
-    var url = '_locales/' + lang + '/messages.json';
+    var url = './locales/' + lang + '/messages.json';
     fetch(url)
       .then(function(res) { return res.json(); })
       .then(function(data) {
