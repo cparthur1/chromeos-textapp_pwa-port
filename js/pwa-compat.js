@@ -56,6 +56,7 @@
 
   // --- chrome.storage ---
   if (!chrome.storage) chrome.storage = {};
+  var storageListeners = [];
   var createStorageArea = function(areaName) {
     return {
       get: function(keys, callback) {
@@ -84,18 +85,23 @@
         if (callback) callback(result);
       },
       set: function(items, callback) {
-        Object.keys(items).forEach(function(key) {
-          localStorage.setItem(areaName + '.' + key, JSON.stringify(items[key]));
-        });
-        
         var changes = {};
         Object.keys(items).forEach(function(key) {
-          changes[key] = { newValue: items[key] };
+          var oldValue = localStorage.getItem(areaName + '.' + key);
+          try { oldValue = JSON.parse(oldValue); } catch(e) {}
+          
+          localStorage.setItem(areaName + '.' + key, JSON.stringify(items[key]));
+          changes[key] = { oldValue: oldValue, newValue: items[key] };
         });
-        // Delay to simulate async behavior and ensure listeners are ready
-        setTimeout(function() {
-          $.event.trigger('storageOnChanged', [changes, areaName]);
-        }, 0);
+        
+        // Notify listeners
+        storageListeners.forEach(function(listener) {
+          try {
+            listener(changes, areaName);
+          } catch (e) {
+            console.error('Error in storage listener:', e);
+          }
+        });
 
         if (callback) {
           callback();
@@ -123,9 +129,7 @@
   chrome.storage.sync = createStorageArea('sync');
   chrome.storage.onChanged = {
     addListener: function(callback) {
-      $(document).bind('storageOnChanged', function(e, changes, areaName) {
-        callback(changes, areaName);
-      });
+      storageListeners.push(callback);
     }
   };
 
