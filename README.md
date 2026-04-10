@@ -1,6 +1,6 @@
 # Text Editor - Progressive Web App (PWA)
 
-**[Live Demo on GitHub Pages](https://cparthur1.github.io/chromeos-textapp_pwa-port/)**
+**[Live Demo available on GitHub Pages](https://cparthur1.github.io/chromeos-textapp_pwa-port/)**
 
 This is a **Progressive Web App (PWA)** fork of the original [Google Chrome OS Text App](https://github.com/GoogleChromeLabs/text-app). 
 
