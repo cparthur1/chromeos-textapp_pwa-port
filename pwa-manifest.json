@@ -3,6 +3,8 @@
   "short_name": "Text",
   "description": "A cross-platform text editor.",
   "start_url": "./index.html",
+  "scope": "./",
+  "id": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
@@ -40,7 +42,8 @@
     {
       "src": "icon/256x256.png",
       "sizes": "256x256",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "launch_handler": {
@@ -50,12 +53,20 @@
     {
       "action": "./index.html",
       "accept": {
-        "text/plain": [".txt", ".md", ".txt", ".md", ".js", ".json", ".css", ".html", ".py", ".sh", ".yaml", ".yml", ".c", ".cpp", ".h", ".java", ".go", ".rs", ".ts"],
-        "text/markdown": [".md"],
-        "text/javascript": [".js", ".mjs"],
-        "application/json": [".json"],
+        "text/plain": [".txt", ".text"],
+        "text/markdown": [".md", ".markdown"],
+        "text/javascript": [".js", ".mjs", ".ts"],
         "text/css": [".css"],
-        "text/html": [".html"]
+        "text/html": [".html", ".htm"],
+        "application/json": [".json"],
+        "text/x-python": [".py"],
+        "text/x-shellscript": [".sh"],
+        "text/x-yaml": [".yaml", ".yml"],
+        "text/x-csrc": [".c"],
+        "text/x-c++src": [".cpp"],
+        "text/x-java-source": [".java"],
+        "text/x-go": [".go"],
+        "text/x-rust": [".rs"]
       }
     }
   ]
