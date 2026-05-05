@@ -33,6 +33,8 @@ FILES_TO_COPY = [
   'icon/96x96.png',
   'icon/128x128.png',
   'icon/256x256.png',
+  'icon/maskable.svg',
+  'icon/ico.svg',
   'third_party/codemirror.next/codemirror.next.bin.js',
   'third_party/jquery/jquery-1.8.3.min.js',
   'third_party/material-components-web/material-components-web.min.css',

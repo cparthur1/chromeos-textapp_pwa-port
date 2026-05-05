@@ -270,8 +270,8 @@ Tabs.prototype.showTab = function(tabId) {
     console.error('Can\'t find tab', tabId);
     return;
   }
-  this.editor_.setSession(tab.getSession(), tab.getExtension());
   this.currentTab_ = tab;
+  this.editor_.setSession(tab.getSession(), tab.getExtension());
   $.event.trigger('switchtab', tab);
   this.editor_.focus();
 };
@@ -312,7 +312,7 @@ Tabs.prototype.closeTab_ = function(tab) {
     if (this.tabs_.length > 1) {
       this.nextTab();
     } else {
-      window.close();
+      this.newTab();
     }
   }
 
@@ -460,6 +460,7 @@ Tabs.prototype.getFilesToRetain = function() {
 };
 
 Tabs.prototype.openFileEntry = function(entry) {
+  if (!entry) return;
   chrome.fileSystem.getDisplayPath(entry, function(path) {
     for (var i = 0; i < this.tabs_.length; i++) {
       if (this.tabs_[i].getPath() === path) {
@@ -521,7 +522,9 @@ Tabs.prototype.saveEntry_ = function(tab, entry, opt_callback) {
  * The event handler for the docchange event.
  */
 Tabs.prototype.onDocChanged_ = function() {
-  this.currentTab_.changed();
+  if (this.currentTab_) {
+    this.currentTab_.changed();
+  }
 }
 
 /**

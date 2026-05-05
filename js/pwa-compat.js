@@ -17,15 +17,45 @@
   // --- chrome.app.runtime ---
   if (!chrome.app) chrome.app = {};
   if (!chrome.app.runtime) chrome.app.runtime = {};
-  chrome.app.runtime.onLaunched = { addListener: function() {} };
+
+  var onLaunchedCallbacks = [];
+  var pendingLaunchData = null;
+  var launched = false;
+
+  function triggerLaunch(data) {
+    if (launched && (!data || !data.items)) return;
+    launched = true;
+    onLaunchedCallbacks.forEach(function(cb) { cb(data); });
+  }
+
+  chrome.app.runtime.onLaunched = {
+    addListener: function(callback) {
+      onLaunchedCallbacks.push(callback);
+      if (pendingLaunchData) {
+        callback(pendingLaunchData);
+        pendingLaunchData = null;
+        launched = true;
+      }
+    }
+  };
 
   // --- chrome.app.window ---
   if (!chrome.app.window) chrome.app.window = {};
   chrome.app.window.create = function(url, options, callback) {
-    console.warn('chrome.app.window.create is not supported in PWA. Opening in new tab.');
+    // If we are already in standalone mode and this is index.html, we might just want to focus.
+    // However, Chrome Apps usually open a NEW window.
+    // In PWA, we'll open a new tab/window if it's not the initial launch.
+    if (launched && url === 'index.html') {
+       console.log('App already launched, ignoring request to open another index.html window to avoid loops.');
+       if (callback) callback(chrome.app.window.current());
+       return;
+    }
+
+    console.warn('chrome.app.window.create called. Opening in new tab.');
     var win = window.open(url, '_blank');
     if (callback) callback(win);
   };
+
   chrome.app.window.current = function() {
     var isMaximized = false;
     return {
@@ -170,13 +200,16 @@
     }
     var url = '_locales/' + lang + '/messages.json';
     fetch(url)
-      .then(function(res) { return res.json(); })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Locale not found: ' + lang);
+        return res.json();
+      })
       .then(function(data) {
         messages = Object.assign(messages, data);
         if (callback) callback();
       })
       .catch(function(err) {
-        console.warn('Failed to load locale ' + lang, err);
+        console.warn('Failed to load locale ' + lang, err.message);
         if (callback) callback();
       });
   }
@@ -225,9 +258,6 @@
       onerror: null,
       onwrite: null,
       truncate: function(size) {
-        // We handle truncation in writeToWriter_ equivalent if needed, 
-        // but modern API usually overwrites or allows seek/truncate on stream.
-        // For simplicity, we'll implement a mock writer that works with util.js
         this.write_requested_size = size;
         if (this.onwrite) this.onwrite();
       },
@@ -270,24 +300,52 @@
   };
 
   chrome.fileSystem.getDisplayPath = function(entry, callback) {
-    // In PWA, we don't have the full path for security reasons.
-    // We'll return the name.
-    callback(entry.name);
+    if (entry && entry.name) {
+      callback(entry.name);
+    } else {
+      callback('Unknown');
+    }
   };
 
   chrome.fileSystem.getWritableEntry = function(entry, callback) {
-    // In PWA, handles from showOpenFilePicker are usually writable if requested.
-    // FileEntryPolyfill wraps the handle which we can use to createWritable.
     callback(entry);
   };
 
-  // File retention is tricky in PWA without IndexedDB for handles.
-  // For now, we'll mock it.
   chrome.fileSystem.retainEntry = function(entry) {
     return 'mock-id-' + entry.name;
   };
   chrome.fileSystem.restoreEntry = function(id, callback) {
-    callback(null); // Cannot restore without user gesture in some cases, or needs IndexedDB for handles
+    callback(null);
   };
+
+  // --- File Handling API ---
+  if ('launchQueue' in window) {
+    window.launchQueue.setConsumer(function(launchParams) {
+      if (!launchParams.files.length) return;
+      
+      var entries = launchParams.files.map(function(handle) {
+        return new FileEntryPolyfill(handle);
+      });
+      
+      var launchData = {
+        items: entries.map(function(entry) {
+          return { entry: entry };
+        })
+      };
+
+      if (onLaunchedCallbacks.length > 0) {
+        triggerLaunch(launchData);
+      } else {
+        pendingLaunchData = launchData;
+      }
+    });
+  }
+
+  // Trigger normal launch if not handled by launchQueue
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      if (!launched) triggerLaunch();
+    }, 500);
+  });
 
 })();

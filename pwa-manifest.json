@@ -41,6 +41,12 @@
       "src": "icon/256x256.png",
       "sizes": "256x256",
       "type": "image/png"
+    },
+    {
+      "src": "icon/maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
   "file_handlers": [
@@ -50,5 +56,8 @@
         "text/plain": [".txt", ".md", ".js", ".json", ".css", ".html", ".py", ".sh", ".yaml", ".yml"]
       }
     }
-  ]
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }
